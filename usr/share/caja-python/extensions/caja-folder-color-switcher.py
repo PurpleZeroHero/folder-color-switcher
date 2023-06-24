@@ -188,6 +188,12 @@ class ChangeFolderColorBase(object):
         if icon_theme is not None:
             theme_name = icon_theme["theme"]
             icon_size = self.get_desired_icon_size()
+
+            # handle Desktop as a special case as the zoom could be set smaller in Caja view than the Desktop view
+            if self.parent_directory.get_uri() == 'file://' + GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP) and icon_size < 64:
+                icon_size = 64 # set a sensible default size to avoid blurry icons on Desktop
+                logger.debug ('Overriding icon size for Desktop to "%s"', icon_size)
+
             default_folder_icon_uri = self.get_icon_uri_for_color_size_and_scale('folder', theme_name, icon_size, self.scale_factor)
 
             if not default_folder_icon_uri:
